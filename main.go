@@ -9,28 +9,30 @@ import (
 type testNode struct {
 }
 
-func (t testNode) OnCreated(path string) {
-	log.Printf("%s OnCreated\n", path)
+func (n *testNode) OnCreated(path string) {
+	log.Println(path, "create")
 }
 
-func (t testNode) OnDeleted(path string) {
-	log.Printf("%s OnDeleted\n", path)
+func (n *testNode) OnDeleted(path string) {
+	log.Println(path, "delete")
 }
 
-func (t testNode) OnData(path string, exist bool, data []byte) {
-	log.Printf("%s exist=%v %s\n", path, exist, string(data))
+func (n *testNode) OnData(path string, exist bool, data []byte) {
+	log.Println(path, "data", exist, string(data))
 }
 
-func (t testNode) OnChildren(parent string, exist bool, children []string) {
-	log.Println(parent, exist, children)
+func (n *testNode) OnChildren(parent string, exist bool, children []string) {
+	log.Println(parent, "children", exist, children)
 }
 
 func main() {
-	log.SetFlags(log.LstdFlags | log.Llongfile)
-	c, err := myzk.NewZkConn([]string{"192.168.31.3:2181"}, time.Second*10)
+	log.SetFlags(log.Llongfile | log.LstdFlags)
+	conn, err := myzk.NewZkConn([]string{"192.168.31.3:2181"}, time.Second*10)
 	if err != nil {
 		panic(err)
 	}
-	var t testNode
-	c.LoopWatchChildren("/bbb", &t)
+	var node testNode
+	conn.WathcNode("/bbb", &node, &node)
+	ch := make(chan int)
+	<-ch
 }

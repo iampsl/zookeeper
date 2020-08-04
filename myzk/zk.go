@@ -110,3 +110,8 @@ func (c *conn) LoopWatchNode(path string, cb NodeNotify) {
 		}
 	}
 }
+
+func (c *conn) WathcNode(path string, nodeNotify NodeNotify, childrenNotify ChildrenNotify) {
+	go c.LoopWatchNode(path, nodeNotify)
+	go c.LoopWatchChildren(path, childrenNotify)
+}
